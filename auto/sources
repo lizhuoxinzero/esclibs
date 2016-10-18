@@ -1,0 +1,23 @@
+
+
+
+
+INCS="\
+    src \
+    src/hash \
+    src/container \
+    src/container/queue \
+    "
+    
+SRCS="\
+    src/listfile.c \
+    src/hash/sha1/sha1.c \
+    src/container/buffer.c \
+    src/container/queue/listqueue.c \
+    src/testmain.c \
+    "
+    
+LIBS="\
+    -lcrypto \
+    "
+

@@ -1,0 +1,87 @@
+
+echo "creating $OBJS dir"
+test -d $OBJS || mkdir -p $OBJS
+test -d $BIN || mkdir -p $BIN
+
+
+
+echo "creating $MAKEFILE header"
+cat << END >$MAKEFILE
+
+CC = $CC
+CPP = $CPP
+LINK = $LINK
+CFLAGS = $CFLAGS
+OUTPUT = $OUTPUT
+
+
+
+END
+
+include_opt="-I "
+regex_cont=' \\\
+	'
+#整理include路径
+INCLUDES=`echo $INCS \
+    | sed -e "s/ *\([^ ][^ ]*\)/$regex_cont$include_opt\1/g"`
+
+cat << END >>$MAKEFILE
+
+INCLUDE=$INCLUDES
+
+END
+
+
+
+##整理链接库LIBS+=-levent #
+cat << END >>$MAKEFILE
+
+LIBS=$LIBS
+
+END
+
+
+##整理出要生成的objs
+objs=`echo $SRCS \
+   | sed -e "s#\([^ ]*\.\)cpp#$OBJS\/\1o#g" \
+         -e "s#\([^ ]*\.\)cc#$OBJS\/\1o#g" \
+         -e "s#\([^ ]*\.\)c#$OBJS\/\1o#g" `
+
+
+cat << END >>$MAKEFILE
+
+all: $objs
+	$CC $LIBS $^ -o $BIN/$OUTPUT
+	
+END
+
+
+##遍历源文件
+
+cc="\$(CC) \$(CFLAGS) \$(INCLUDE) "
+
+for src in $SRCS
+do
+    obj=`echo $src \
+        | sed -e "s#^\(.*\.\)cpp\\$#$OBJS\/\1o#g" \
+              -e "s#^\(.*\.\)cc\\$#$OBJS\/\1o#g" \
+              -e "s#^\(.*\.\)c\\$#$OBJS\/\1o#g" `
+    dir=`echo $src \
+        | sed -e "s#^\(.*\)\/\(.*\.\)c#$OBJS\/\1#g"`
+	mkdir -p $dir
+
+cat << END  >> $MAKEFILE
+
+$obj:   $src 
+	$cc   $^ -c -o $obj
+END
+done
+
+
+
+
+cat << END >> $MAKEFILE
+clean:
+	rm -rf Makefile $OBJS $BIN
+END
+

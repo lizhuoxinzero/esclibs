@@ -1,0 +1,9 @@
+BIN=bin
+CC=gcc
+CPP=g++
+OBJS=objs
+MAKEFILE=Makefile
+OUTPUT=test_exe
+
+
+
