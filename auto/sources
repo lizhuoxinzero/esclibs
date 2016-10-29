@@ -17,6 +17,8 @@ SRCS="\
 
 EXAMPLES="\
     src/examples/speed_test.c \
+    src/examples/log_test.c \
+    src/examples/hash_test.c \
     "
  
 LIBS="\

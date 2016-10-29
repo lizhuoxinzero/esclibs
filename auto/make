@@ -69,7 +69,7 @@ do
               -e "s#src\/examples\/\(.*\)\.c\\$#\1#" `
 
 cat << END  >> $MAKEFILE
-	$cc  $src $LIB/$STATICLIB -o $BIN/$output
+	$cc  $src $LIB/$STATICLIB $LIBS -o $BIN/$output
 END
 done
 

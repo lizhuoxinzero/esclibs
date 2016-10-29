@@ -2,7 +2,13 @@
 #include "log/log.h"
 #include "timer/speed.h"
 
-extern void  speed_start(speed_t *speed);
+
+void test(void *args)
+{
+	LOG_INFO("get a string args:%s, and start speed_run test", (char*)args);
+	sleep(3);
+
+}
 
 int main()
 {
@@ -13,5 +19,9 @@ int main()
 	LOG_DEBUG("use time:%lds", speed_result_s(&speed));
 	LOG_DEBUG("use time:%ldms", speed_result_ms(&speed));
 	LOG_DEBUG("use time:%ldus", speed_result_us(&speed));
+	
+
+	int64_t ret = speed_run(test, "testargs");	
+	LOG_DEBUG("speed_run use time:%ldus", ret);
 	return 0;
 }

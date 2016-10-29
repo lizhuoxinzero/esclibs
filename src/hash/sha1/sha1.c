@@ -7,7 +7,6 @@
 #include "hash/sha1/sha1.h"
 
 const int BUFFER_SIZE = 8192;
-const int SHA1_STRLEN = 20;
 
 void print_sha1(uint8_t *sha1)
 {
@@ -18,6 +17,15 @@ void print_sha1(uint8_t *sha1)
 	printf("\n");
 }
 
+uint8_t* fmt_sha1(uint8_t *fmt, uint8_t *sha1)
+{
+	int i;
+	for(i=0; i<SHA1_STRLEN; i++){
+		sprintf(fmt+i*2,"%02x", sha1[i]);
+	}
+	fmt[SHA1_FMTLEN-1] = 0;
+	return fmt;
+}
 
 int SHA1_file(const char* filepath, uint8_t *result)
 {

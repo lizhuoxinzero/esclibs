@@ -13,27 +13,39 @@ void speed_start(speed_t *speed)
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
-	speed->start = tv.tv_sec*1000000 + tv.tv_usec;
+	speed->start = (int64_t)tv.tv_sec*1000000 + (int64_t)tv.tv_usec;
 }
 
 void speed_end(speed_t *speed)
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
-	speed->end = tv.tv_sec*1000000 + tv.tv_usec;
+	speed->end = (int64_t)tv.tv_sec*1000000 + (int64_t)tv.tv_usec;
 }
 
-uint64_t speed_result_s(speed_t *speed)
+
+int64_t speed_run(void(*run)(void *args), void *args)
+{
+	speed_t speed;
+	speed_start(&speed);
+	printf("%lld  %lld\n", speed.start, speed.end);
+	run(args);
+	speed_end(&speed);
+	printf("%lld  %lld\n", speed.start, speed.end);
+	return speed_result_us(&speed);
+}
+
+int64_t speed_result_s(speed_t *speed)
 {
 	return (speed->end - speed->start) / 1000000;
 }
 
-uint64_t speed_result_ms(speed_t *speed)
+int64_t speed_result_ms(speed_t *speed)
 {
 	return (speed->end - speed->start) / 1000;
 }
 
-uint64_t speed_result_us(speed_t *speed)
+int64_t speed_result_us(speed_t *speed)
 {
 	return speed->end - speed->start;
 }

@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-extern const int SHA1_STRLEN;
+#define SHA1_STRLEN 20
+#define SHA1_FMTLEN 41
 extern void print_sha1(uint8_t *sha1);
 
 
