@@ -83,5 +83,7 @@ done
 cat << END >> $MAKEFILE
 clean:
 	rm -rf Makefile $OBJS $BIN
+clear:
+	rm -rf  $OBJS $BIN
 END
 

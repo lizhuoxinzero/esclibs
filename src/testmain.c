@@ -2,10 +2,12 @@
 #include <string.h>
 #include <errno.h>
 
-#include "listfile.h"
+#include "fs/listfile.h"
 #include "container/buffer.h"
 #include "container/queue/listqueue.h"
 #include "hash/sha1/sha1.h"
+#include "log/log.h"
+
 
 int main(int argc, char **argv)
 {
@@ -75,7 +77,7 @@ int main(int argc, char **argv)
 
 	}
 */
-
+/*
 	if (argc < 2){
 		printf("please input path\n");
 		return 0;
@@ -87,6 +89,18 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	print_sha1(sha1);	
+*/
+
+
+
+	//test log.h
+	LOG_INFO("%s-%d", "sdf",34);
+	LOG_DEBUG("%s-%d", "sdf",34);
+	LOG_ERROR_MSG("%s-%d", "sdf",34);
+	LOG_FATAL("%s-%d", "sdf",34);
+	LOG_INFO("%s-%d", "sdf",34);
+
+
 	return 0;
 }
 

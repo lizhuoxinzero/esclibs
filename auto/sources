@@ -7,13 +7,16 @@ INCS="\
     src/hash \
     src/container \
     src/container/queue \
+    src/log \
+    src/fs \
     "
     
 SRCS="\
-    src/listfile.c \
+    src/fs/listfile.c \
     src/hash/sha1/sha1.c \
     src/container/buffer.c \
     src/container/queue/listqueue.c \
+    src/log/log.c \
     src/testmain.c \
     "
     

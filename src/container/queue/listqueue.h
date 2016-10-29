@@ -1,7 +1,8 @@
-#ifndef LISTQUEUE_H
-#define LISTQUEUE_H
+#ifndef ES_LISTQUEUE_H
+#define ES_LISTQUEUE_H
 
 #include <stdint.h>
+#include "container/iterator.h"
 #include "container/buffer.h"
 
 typedef struct LIST_QUEUE_NODE{
@@ -16,11 +17,6 @@ typedef struct{
 	buffer_t *head_buf;
 	buffer_t *recycle_buf;
 }listqueue_t;
-
-
-typedef struct{
-	void *data;
-}iterator_t;
 
 /**
  * 创建和初始化listqueue_t
@@ -37,11 +33,19 @@ extern int listqueue_close(listqueue_t* list);
  *
  * @param data 将要push进queue的数据，将拷贝data指向的内容
  * @param size data指向的内容的大小
+ * @return 塞进去的新内容地址
  */
-extern listqueue_node_t* listqueue_push(listqueue_t* listqueue, void *data, uint32_t size);
+extern void* listqueue_push(listqueue_t* listqueue, void *data, uint32_t size);
+
+/**
+ * 将创建一个size大小的内存空间，并push队列尾部，然后返回该内存地址，
+ * 即可向push队列再附值，可节省一次复制操作。
+ */
+extern void* listqueue_push_new(listqueue_t* listqueue, uint32_t size);
+
+
 
 extern iterator_t listqueue_iterator(listqueue_t *listqueue);
-
 extern void* listqueue_iter_next(iterator_t *iter);
 
 

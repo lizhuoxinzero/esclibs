@@ -1,5 +1,5 @@
-#ifndef LITTLETOOL_H
-#define LITTLETOOL_H
+#ifndef ES_LITTLETOOL_H
+#define ES_LITTLETOOL_H
 
 #include "container/queue/listqueue.h"
 

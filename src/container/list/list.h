@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef ES_LIST_H
+#define ES_LIST_H
 
 typedef struct{
 	void *data;

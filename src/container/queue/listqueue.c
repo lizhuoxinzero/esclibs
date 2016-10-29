@@ -55,36 +55,86 @@ int listqueue_close(listqueue_t* listqueue)
 	return 0;
 }
 
-listqueue_node_t* listqueue_push(listqueue_t *listqueue, void *data, uint32_t size)
+static buffer_t* _get_buf(listqueue_t *listqueue)
 {
-	//获取缓存块
-	listqueue_node_t *node = (listqueue_node_t *)buffer_alloc(listqueue->cur_buf, size+sizeof(listqueue_node_t));
-	if (node == NULL){	//存储不够了
-		buffer_t *buffer = buffer_new(listqueue->blksize);
-		if( buffer == NULL){
-			return NULL;
-		}
+	buffer_t *buffer;
+	//先从recycle_buf里找
+	if (listqueue->recycle_buf != NULL) {
+		buffer = listqueue->recycle_buf;
+		listqueue->recycle_buf = buffer->next;
+		return buffer;
+	}
+	buffer = buffer_new(listqueue->blksize);
+	if (buffer == NULL) {
+		return NULL;
+	}
+	
+	if (listqueue->cur_buf != NULL)
 		listqueue->cur_buf = listqueue->cur_buf->next = buffer;
+	else
+		listqueue->cur_buf = buffer;
+	
+	return buffer;
+}
+
+static listqueue_node_t* _get_node(listqueue_t *listqueue, uint32_t size)
+{
+	listqueue_node_t *node;
+	while(1) {
 		node = (listqueue_node_t *)buffer_alloc(listqueue->cur_buf, size+sizeof(listqueue_node_t));
 		if (node == NULL){
-			return NULL;
+			if (NULL == _get_buf(listqueue) ) {
+				return NULL;
+			}else {
+				continue;
+			}
 		}
+		return node;
+	}
+}
+
+void* listqueue_push(listqueue_t *listqueue, void *data, uint32_t size)
+{
+	//获取缓存块
+	listqueue_node_t *node = _get_node(listqueue, size);
+	if (node == NULL){	//严重失败，内存都申请不到了
+		return NULL;
 	}
 
-	memcpy(node+1, data, size);
+	memcpy(node+1, data, size);	//将data指向的内容拷贝进node+1的位置
+	node->next = NULL;
+
+	if(listqueue->head != NULL){
+		listqueue->tail->next = node;
+		listqueue->tail = node;
+	}else{
+		listqueue->head = node;
+		listqueue->tail = node;
+	}
+
+	return node+1;	//返回内存可用地址	
+}
+
+void* listqueue_push_new(listqueue_t *listqueue, uint32_t size)
+{
+	//获取缓存块
+	listqueue_node_t *node = _get_node(listqueue, size);
+	if (node == NULL){	//严重失败，内存都申请不到了
+		return NULL;
+	}
+
 	node->next = NULL;
 
 	if(listqueue->head == NULL){
-		listqueue->head = node;
-		listqueue->tail = node;
-	}else{
 		listqueue->tail->next = node;
 		listqueue->tail = node;
+	}else{
+		listqueue->head = node;
+		listqueue->tail = node;
 	}
-
-	return node;	
+	return node+1;	
 }
-
+///////////////////////////////////////////////////////////////////
 
 iterator_t listqueue_iterator(listqueue_t *listqueue)
 {
