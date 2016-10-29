@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <string.h>
-#include "listfile.h"
+#include "fs/listfile.h"
 #include "container/queue/listqueue.h"
 
 int listfile(const char * path, int prelen, int ifpasshid, listqueue_t *result)

@@ -21,12 +21,17 @@ typedef struct{
 /**
  * 创建和初始化listqueue_t
  *
+ * listqueue_init只用于初始化，不会创建新的listqueue_t, 销毁要用listqueue_close
+ * listqueue_new用于创建和初始化，销毁要用listqueue_close_and_free
+ *
  * @param blksize the block buffer size, if zero then use 512byte
- * @return a pointer to a newly initialized listqueue_t object, if error then return NULL
+ * @return 出错时返回NULL
  */
+extern listqueue_t* listqueue_init(listqueue_t* listqueue, uint32_t blksize);
 extern listqueue_t* listqueue_new(uint32_t blksize);
 
 extern int listqueue_close(listqueue_t* list);
+extern int listqueue_close_and_free(listqueue_t* list);
 
 /**
  * push data into queue

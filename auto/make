@@ -2,6 +2,7 @@
 echo "creating $OBJS dir"
 test -d $OBJS || mkdir -p $OBJS
 test -d $BIN || mkdir -p $BIN
+test -d $LIB || mkdir -p $LIB
 
 
 
@@ -51,14 +52,30 @@ objs=`echo $SRCS \
 cat << END >>$MAKEFILE
 
 all: $objs
-	$CC $LIBS $^ -o $BIN/$OUTPUT
-	
+#	$CC $LIBS $^ -o $BIN/$OUTPUT
+	ar rv $LIB/$STATICLIB $^ 
+
+examples:
 END
+
+cc="\$(CC) \$(CFLAGS) \$(INCLUDE) "
+
+##遍历例子文件
+for src in $EXAMPLES
+do
+    output=`echo $src \
+        | sed -e "s#src\/examples\/\(.*\)\.cpp\\$#\1#" \
+              -e "s#src\/examples\/\(.*\)\.cc\\$#\1#" \
+              -e "s#src\/examples\/\(.*\)\.c\\$#\1#" `
+
+cat << END  >> $MAKEFILE
+	$cc  $src $LIB/$STATICLIB -o $BIN/$output
+END
+done
 
 
 ##遍历源文件
 
-cc="\$(CC) \$(CFLAGS) \$(INCLUDE) "
 
 for src in $SRCS
 do
@@ -78,12 +95,15 @@ END
 done
 
 
+## 
+
+
 
 
 cat << END >> $MAKEFILE
 clean:
-	rm -rf Makefile $OBJS $BIN
+	rm -rf Makefile $OBJS $BIN $LIB
 clear:
-	rm -rf  $OBJS $BIN
+	rm -rf  $objs $BIN/* $LIB/*
 END
 

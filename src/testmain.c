@@ -100,7 +100,6 @@ int main(int argc, char **argv)
 	LOG_FATAL("%s-%d", "sdf",34);
 	LOG_INFO("%s-%d", "sdf",34);
 
-
 	return 0;
 }
 

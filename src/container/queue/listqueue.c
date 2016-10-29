@@ -12,10 +12,22 @@ listqueue_t* listqueue_new(uint32_t blksize)
 	
 	listqueue_t *listqueue = malloc(sizeof(listqueue_t));
 	if(listqueue == NULL) return NULL;
+	void *temp = listqueue_init(listqueue, blksize);
+	if (temp == NULL){
+		free(listqueue);
+		return NULL;
+	}
+	return listqueue;
+}
+
+listqueue_t* listqueue_init(listqueue_t *listqueue, uint32_t blksize)
+{
+	if (blksize == 0){
+		blksize = 512; 
+	}
 
 	listqueue->cur_buf = buffer_new(blksize);
 	if (listqueue->cur_buf == NULL){
-		free(listqueue);
 		return NULL;
 	}
 	listqueue->head_buf = listqueue->cur_buf;
@@ -25,7 +37,6 @@ listqueue_t* listqueue_new(uint32_t blksize)
 	listqueue->tail = NULL;
 	return listqueue;
 }
-
 
 int listqueue_close(listqueue_t* listqueue)
 {
@@ -50,8 +61,13 @@ int listqueue_close(listqueue_t* listqueue)
 		}
 	}
 	
-	free(listqueue); //释放分配的空间
+	return 0;
+}
 
+int listqueue_close_and_free(listqueue_t* listqueue)
+{
+	listqueue_close(listqueue);
+	free(listqueue); //释放分配的空间
 	return 0;
 }
 

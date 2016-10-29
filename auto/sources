@@ -4,11 +4,6 @@
 
 INCS="\
     src \
-    src/hash \
-    src/container \
-    src/container/queue \
-    src/log \
-    src/fs \
     "
     
 SRCS="\
@@ -17,9 +12,13 @@ SRCS="\
     src/container/buffer.c \
     src/container/queue/listqueue.c \
     src/log/log.c \
-    src/testmain.c \
+    src/timer/speed.c \
     "
-    
+
+EXAMPLES="\
+    src/examples/speed_test.c \
+    "
+ 
 LIBS="\
     -lcrypto \
     "

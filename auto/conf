@@ -1,9 +1,10 @@
 BIN=bin
+LIB=lib
 CC=gcc
 CPP=g++
 OBJS=objs
 MAKEFILE=Makefile
 OUTPUT=test_exe
-
+STATICLIB=libesc.a
 
 
