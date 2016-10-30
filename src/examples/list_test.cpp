@@ -13,7 +13,7 @@ extern "C"
 speed_t speed1;
 speed_t speed2;
 speed_t speed3;
-uint64_t temp[2000000];
+uint64_t temp[20000000];
 void test1(void *args)
 {
 	uint64_t i=0;
