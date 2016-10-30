@@ -12,10 +12,8 @@ typedef struct LIST_QUEUE_NODE{
 typedef struct{
 	listqueue_node_t *head;
 	listqueue_node_t *tail;
-	uint32_t blksize;
-	buffer_t *cur_buf;
-	buffer_t *head_buf;
-	buffer_t *recycle_buf;
+	uint32_t queue_size;
+	queue_buffer_t buffer;
 }listqueue_t;
 
 /**
@@ -30,9 +28,13 @@ typedef struct{
 extern listqueue_t* listqueue_init(listqueue_t* listqueue, uint32_t blksize);
 extern listqueue_t* listqueue_new(uint32_t blksize);
 
-extern int listqueue_close(listqueue_t* list);
-extern int listqueue_close_and_free(listqueue_t* list);
+extern void listqueue_close(listqueue_t* list);
+extern void listqueue_close_and_free(listqueue_t* list);
 
+/*
+ * 清理链接队列，使之重复使用
+ * */
+extern void listqueue_clean(listqueue_t* list);
 /**
  * push data into queue
  *
@@ -48,7 +50,10 @@ extern void* listqueue_push(listqueue_t* listqueue, void *data, uint32_t size);
  */
 extern void* listqueue_push_new(listqueue_t* listqueue, uint32_t size);
 
+extern void listqueue_pop(listqueue_t* listqueue);
 
+extern void* listqueue_head(listqueue_t* listqueue);
+extern void* listqueue_tail(listqueue_t* listqueue);
 
 extern iterator_t listqueue_iterator(listqueue_t *listqueue);
 extern void* listqueue_iter_next(iterator_t *iter);

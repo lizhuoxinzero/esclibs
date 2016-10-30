@@ -26,93 +26,38 @@ listqueue_t* listqueue_init(listqueue_t *listqueue, uint32_t blksize)
 		blksize = 512; 
 	}
 
-	listqueue->cur_buf = buffer_new(blksize);
-	if (listqueue->cur_buf == NULL){
-		return NULL;
-	}
-	listqueue->head_buf = listqueue->cur_buf;
-	listqueue->recycle_buf = NULL;
-	listqueue->blksize = blksize;
+	queue_buffer_init(&(listqueue->buffer), blksize);
+
+	listqueue->queue_size = 0;
 	listqueue->head = NULL;
 	listqueue->tail = NULL;
 	return listqueue;
 }
 
-int listqueue_close(listqueue_t* listqueue)
+void listqueue_clean(listqueue_t* listqueue)
 {
-	buffer_t *buf = listqueue->recycle_buf;
-	buffer_t *temp;
-	if(buf != NULL){	//释放回收站空间
-		while(1){
-			temp = buf->next;
-			buffer_close(buf);
-			if(temp == NULL) break;
-			buf = temp;
-		}
-	}
-	
-	buf = listqueue->head_buf;
-	if(buf != NULL){	//释放正使用的buffer对象
-		while(1){
-			temp = buf->next;
-			buffer_close(buf);
-			if(temp == NULL) break;
-			buf = temp;
-		}
-	}
-	
-	return 0;
+	listqueue->queue_size = 0;
+	listqueue->head = NULL;
+	listqueue->tail = NULL;
+	queue_buffer_clean(&(listqueue->buffer));
 }
 
-int listqueue_close_and_free(listqueue_t* listqueue)
+void listqueue_close(listqueue_t* listqueue)
+{
+	queue_buffer_close(&(listqueue->buffer));
+}
+
+void listqueue_close_and_free(listqueue_t* listqueue)
 {
 	listqueue_close(listqueue);
 	free(listqueue); //释放分配的空间
-	return 0;
 }
 
-static buffer_t* _get_buf(listqueue_t *listqueue)
-{
-	buffer_t *buffer;
-	//先从recycle_buf里找
-	if (listqueue->recycle_buf != NULL) {
-		buffer = listqueue->recycle_buf;
-		listqueue->recycle_buf = buffer->next;
-		return buffer;
-	}
-	buffer = buffer_new(listqueue->blksize);
-	if (buffer == NULL) {
-		return NULL;
-	}
-	
-	if (listqueue->cur_buf != NULL)
-		listqueue->cur_buf = listqueue->cur_buf->next = buffer;
-	else
-		listqueue->cur_buf = buffer;
-	
-	return buffer;
-}
-
-static listqueue_node_t* _get_node(listqueue_t *listqueue, uint32_t size)
-{
-	listqueue_node_t *node;
-	while(1) {
-		node = (listqueue_node_t *)buffer_alloc(listqueue->cur_buf, size+sizeof(listqueue_node_t));
-		if (node == NULL){
-			if (NULL == _get_buf(listqueue) ) {
-				return NULL;
-			}else {
-				continue;
-			}
-		}
-		return node;
-	}
-}
 
 void* listqueue_push(listqueue_t *listqueue, void *data, uint32_t size)
 {
 	//获取缓存块
-	listqueue_node_t *node = _get_node(listqueue, size);
+	listqueue_node_t *node = (listqueue_node_t *)queue_buffer_alloc(&(listqueue->buffer), size+sizeof(listqueue_node_t));
 	if (node == NULL){	//严重失败，内存都申请不到了
 		return NULL;
 	}
@@ -128,27 +73,55 @@ void* listqueue_push(listqueue_t *listqueue, void *data, uint32_t size)
 		listqueue->tail = node;
 	}
 
+	listqueue->queue_size += 1;
 	return node+1;	//返回内存可用地址	
 }
 
 void* listqueue_push_new(listqueue_t *listqueue, uint32_t size)
 {
 	//获取缓存块
-	listqueue_node_t *node = _get_node(listqueue, size);
+	listqueue_node_t *node = (listqueue_node_t *)queue_buffer_alloc(&(listqueue->buffer), size+sizeof(listqueue_node_t));
 	if (node == NULL){	//严重失败，内存都申请不到了
 		return NULL;
 	}
 
 	node->next = NULL;
 
-	if(listqueue->head == NULL){
+	if(listqueue->head != NULL){
 		listqueue->tail->next = node;
 		listqueue->tail = node;
 	}else{
 		listqueue->head = node;
 		listqueue->tail = node;
 	}
+	listqueue->queue_size += 1;
 	return node+1;	
+}
+
+void listqueue_pop(listqueue_t* listqueue)
+{
+	if (listqueue->head == listqueue->tail)
+		listqueue->head = listqueue->tail = NULL;
+	else
+		listqueue->head = listqueue->head->next;
+	listqueue->queue_size -= 1;
+	queue_buffer_pop(&(listqueue->buffer));	
+}
+
+void* listqueue_head(listqueue_t* listqueue)
+{
+	if (listqueue->head == NULL)
+		return NULL;
+
+	return listqueue->head +1;
+}
+
+void* listqueue_tail(listqueue_t* listqueue)
+{
+	if (listqueue->tail == NULL)
+		return NULL;
+
+	return listqueue->tail +1;
 }
 ///////////////////////////////////////////////////////////////////
 

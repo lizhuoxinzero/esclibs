@@ -28,10 +28,8 @@ int64_t speed_run(void(*run)(void *args), void *args)
 {
 	speed_t speed;
 	speed_start(&speed);
-	printf("%lld  %lld\n", speed.start, speed.end);
 	run(args);
 	speed_end(&speed);
-	printf("%lld  %lld\n", speed.start, speed.end);
 	return speed_result_us(&speed);
 }
 

@@ -19,6 +19,8 @@ EXAMPLES="\
     src/examples/speed_test.c \
     src/examples/log_test.c \
     src/examples/hash_test.c \
+    src/examples/listqueue_test.c \
+    src/examples/list_test.cpp \
     "
  
 LIBS="\

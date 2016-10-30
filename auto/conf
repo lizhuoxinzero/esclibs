@@ -7,4 +7,5 @@ MAKEFILE=Makefile
 OUTPUT=test_exe
 STATICLIB=libesc.a
 
+CFLAGS=-g
 

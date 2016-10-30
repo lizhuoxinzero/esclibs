@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <errno.h>
 
+extern void getLogTime(char *format);
+
 #define LOG_INFO(format, args...) \
 	do{\
 		char formattime[18];\
