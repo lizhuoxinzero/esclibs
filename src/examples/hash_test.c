@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	print_sha1(tsha1);
 	fmt_sha1(tsha1fmt, tsha1);
 	LOG_INFO("%s", tsha1fmt);
-	LOG_INFO("use time:%lldus", ret);
+	LOG_INFO("use time:%ldus", ret);
 
 	return 0;
 }

@@ -17,7 +17,7 @@ void test1(void *args)
 	int count = *((int*)args);
 	listqueue_t listqueue;
 	speed_start(&speed1);
-	listqueue_init(&listqueue, 1024);
+	listqueue_init(&listqueue, 8192);
 	for(i=0; i<count; i++){
 		uint64_t *node = (uint64_t*)listqueue_push_new(&listqueue, sizeof(uint64_t));
 		*node = i;
@@ -83,10 +83,10 @@ int main(int argc, char **argv)
 //	}
 
 
-	LOG_INFO("use time:%lldus", ret);
-	LOG_INFO("init and push use time:%lldus", speed_result_us(&speed1));
-	LOG_INFO("scan use time:%lldus", speed_result_us(&speed2));
-	LOG_INFO("close use time:%lldus", speed_result_us(&speed3));
+	LOG_INFO("use time:%ldus", ret);
+	LOG_INFO("init and push use time:%ldus", speed_result_us(&speed1));
+	LOG_INFO("scan use time:%ldus", speed_result_us(&speed2));
+	LOG_INFO("close use time:%ldus", speed_result_us(&speed3));
 //}
 	return 0;
 }

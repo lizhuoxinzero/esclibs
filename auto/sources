@@ -21,6 +21,7 @@ EXAMPLES="\
     src/examples/hash_test.c \
     src/examples/listqueue_test.c \
     src/examples/list_test.cpp \
+    src/examples/zlist_test.cpp \
     "
  
 LIBS="\

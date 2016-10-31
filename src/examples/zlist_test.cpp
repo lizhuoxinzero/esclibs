@@ -8,6 +8,7 @@ extern "C"
 #include "timer/speed.h"
 #include "log/log.h"
 }
+#include "container/list/zlist.h"
 
 
 speed_t speed1;
@@ -19,18 +20,22 @@ void test1(void *args)
 	uint64_t i=0;
 	int count = *((int*)args);
 	speed_start(&speed1);
-	std::list<uint64_t> list;
+	CList<uint64_t> list;
 	for(i=0; i<count; i++){
-		list.push_back(i);
+		if ( !list.Push_tail(i))
+        {
+            printf("error\n");
+        }
 	}
 	speed_end(&speed1);
 
 	speed_start(&speed2);
 	i=0;
-	std::list<uint64_t>::iterator it;
-	for(it = list.begin(); it!=list.end(); it++){
-		temp[i++] = *it;
-	}
+	CListIterator<uint64_t> it = list.GetIterator();
+    while(it.Next()){
+        temp[i++] = *it;
+    }
+
 	speed_end(&speed2);
 
 }
