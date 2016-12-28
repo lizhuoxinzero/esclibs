@@ -13,6 +13,8 @@ SRCS="\
     src/container/queue/listqueue.c \
     src/log/log.c \
     src/timer/speed.c \
+    src/db/esdb.c \
+    src/db/mmapdb/mmapdb.c \
     "
 
 EXAMPLES="\
@@ -22,6 +24,8 @@ EXAMPLES="\
     src/examples/listqueue_test.c \
     src/examples/list_test.cpp \
     src/examples/zlist_test.cpp \
+    src/examples/queue_test.cpp \
+    src/examples/mmapdb_test.c \
     "
  
 LIBS="\
